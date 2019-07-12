@@ -6,4 +6,17 @@ before_install:
   - docker build -t viktor2003/docker-react -f Dockerfile.dev .
 
 script:
-  - docker run -e CI=true viktor2003/docker-react npm run test
+  - docker run -e CI=true viktor2003/docker-react npm run test #-e CI=true is equal to -- --coverage for accepting input
+
+deploy:
+  provider: elasticbeanstalk
+  region: "eu-central-1" #region from docker link in AWS website
+  app: "docker"
+  env: "Docker-env"
+  bucket_name: "elasticbeanstalk-eu-central-1-484552617458" #greped from S3 hardware naming
+  bucket_path: "docker" #the same name as app has
+  on:
+    branch: master #deploying in case if it's master branch
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
